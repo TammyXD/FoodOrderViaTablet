@@ -68,7 +68,7 @@
       const uniqueItems = cart.map(i => i.itemId);
 
       if (!existing && uniqueItems.length >= listcount) {
-        alert(`คุณสั่งครบ ${uniqueItems.length} เมนูแล้ว ไม่สามารถเพิ่มเมนูใหม่ได้ กรุณายืนรายการที่สั่งก่อน`);
+        alert(`คุณสั่งครบ ${uniqueItems.length} เมนูแล้ว ไม่สามารถเพิ่มเมนูใหม่ได้ กรุณายืนยันรายการที่สั่งก่อนหน้าเพื่อสั่งเมนูใหม่`);
         return;
       }
 

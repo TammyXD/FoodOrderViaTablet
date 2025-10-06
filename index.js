@@ -85,7 +85,7 @@ app.post('/add-item', (req, res) => {
       db.all(`SELECT COUNT(*) AS count FROM ${tableName}`, [], (err, rows) => {
         const count = rows[0]?.count || 0;
         if (count >= (listcount + 1)) {
-          return res.status(400).send(`คุณสั่งครบ ${listcount} เมนูแล้ว ไม่สามารถเพิ่มเมนูใหม่ได้`);
+          return res.status(400).send(`คุณสั่งครบ ${listcount} เมนูแล้ว ไม่สามารถเพิ่มเมนูใหม่ได้ กรุณายืนยันรายการอาหารก่อนหน้าเพื่อสั่งเมนูใหม่`);
         }
         // ยังไม่เกิน : เพิ่มเมนูใหม่
         db.run(`INSERT INTO ${tableName} (item_id, name, price, quantity) VALUES (?, ?, ?, 1)`, [itemId, name, price]);

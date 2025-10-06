@@ -1,0 +1,43 @@
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>ชื่อเมนู</th>
+        <th>จำนวน</th>
+        <th>ราคา/หน่วย</th>
+        <th>รวม</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% 
+        let subtotal = 0;
+        items.forEach(item => {
+          const total = item.price * item.quantity;
+          subtotal += total;
+      %>
+        <tr>
+          <td><%= item.name %></td>
+          <td><%= item.quantity %></td>
+          <td>฿<%= item.price.toFixed(2) %></td>
+          <td>฿<%= total.toFixed(2) %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+    <tfoot class="table-light">
+      <tr>
+        <td colspan="3" class="text-end">ยอดรวม</td>
+        <td>฿<%= subtotal.toFixed(2) %></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="text-end">VAT 7%</td>
+        <td>฿<%= (subtotal * 0.07).toFixed(2) %></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="text-end">Service Charge 10%</td>
+        <td>฿<%= (subtotal * 0.10).toFixed(2) %></td>
+      </tr>
+      <tr class="fw-bold">
+        <td colspan="3" class="text-end">ยอดสุทธิ</td>
+        <td>฿<%= (subtotal * 1.17).toFixed(2) %></td>
+      </tr>
+    </tfoot>
+</table>

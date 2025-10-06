@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>หมวดหมู่อาหาร</title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #121212ff;
+      font-family: 'Sarabun', sans-serif;
+    }
+    .category-btn {
+      width: 100%;
+      height: 200px;
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    .footer-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+    a { cursor: pointer; transition: transform 0.2s; }
+    a:hover { transform: scale(1.03); }
+  </style>
+</head>
+<body>
+  <div class="position-fixed top-0 end-0 p-3" style="z-index:1050;">
+    <span class="badge bg-black text-white fs-5 shadow">โต๊ะ <%= tableNumber %></span>
+  </div>
+  <div class="container mt-5">
+
+    <h2 class="text-center text-white mb-5">หมวดหมู่อาหาร</h2>
+
+    <div class="row g-3">
+      <% categories.forEach(cat => { %>
+        <div class="col-md-6 col-lg-4">
+          <a href="/category/<%= cat.id %>?tableNumber=<%= tableNumber %>" class="text-decoration-none category-btn position-relative d-block shadow-sm rounded overflow-hidden" style="height: 180px;">
+            <img src="/button/<%= cat.id %>.png" class="w-100 h-100 object-fit-cover position-absolute top-0 start-0">
+            <div class="position-relative z-1 text-white text-center d-flex justify-content-center align-items-center h-100" style="background: rgba(0,0,0,0.4);">
+              <%= cat.name %>
+            </div>
+          </a>
+        </div>
+      <% }) %>
+    </div>
+    <%- include("footer", { tableNum: tableNumber }) %>
+</body>

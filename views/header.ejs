@@ -1,0 +1,29 @@
+<style>
+  body {
+    background-color: #121212ff;
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="/?tableNumber=<%= tableNumber %>">ร้านซูชิ</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#categoryNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="categoryNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <% categories.forEach(cat => { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/category/<%= cat.id %>?tableNumber=<%= tableNumber %>"><%= cat.name %></a>
+          </li>
+        <% }) %>
+      </ul>
+      <a class="nav-link me-2 text-white" href="/manage_menu">พนักงาน</a>
+      <a class="nav-link me-2 text-white" href="/kitchen">พ่อครัว</a>
+       <span class="badge bg-black text-white fs-6 me-3">โต๊ะ <%= tableNumber %></span>
+    </div>
+  </div>
+</nav>

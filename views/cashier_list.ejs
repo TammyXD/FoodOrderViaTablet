@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>รายชื่อโต๊ะที่รอชำระเงิน</title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="p-4 bg-dark text-white">
+  <h3 class="mb-4">โต๊ะที่รอชำระเงิน</h3>
+
+  <% if (tableList.length === 0) { %>
+    <div class="alert alert-success">ไม่มีโต๊ะที่รอชำระเงินในขณะนี้</div>
+  <% } else { %>
+    <ul class="list-group">
+  <% tableList.forEach(t => { %>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        โต๊ะ <strong><%= t.tableNumber %></strong>
+        <% if (t.method === 'ยังไม่พร้อมชำระเงิน') { %>
+          <span class="badge bg-warning text-dark ms-2">ยังไม่พร้อมชำระเงิน</span>
+        <% } else { %>
+          <span class="badge bg-info ms-2"><%= t.method %></span>
+        <% } %>
+      </div>
+
+      <div class="d-flex gap-2">
+        <a href="/checkout_cashier/<%= t.tableNumber %>" class="btn btn-sm btn-info text-white">ตรวจสอบรายการอาหาร</a>
+
+        <% if (t.method === 'เงินสด') { %>
+          <form method="POST" action="/checkout_cashier/confirm-payment">
+            <input type="hidden" name="tableNumber" value="<%= t.tableNumber %>">
+            <button type="submit" class="btn btn-sm btn-success">ยืนยันการชำระเงิน</button>
+          </form>
+        <% } %>
+      </div>
+    </li>
+  <% }) %>
+</ul>
+<% } %>
+
+  <a href="/" class="btn btn-outline-light mt-4">< กลับหน้าเมนู</a>
+  <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

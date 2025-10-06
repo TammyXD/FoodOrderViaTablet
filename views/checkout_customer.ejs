@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Cashout</title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="p-4 bg-dark text-white">
+  <h3 class="mb-4">รายการที่ต้องชำระ โต๊ะ <%= tableNumber %></h3>
+  
+  <%- include("sum_table", { items: items }) %>
+
+<div class="text-end mt-4">
+  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#paymentModal">
+    เลือกช่องทางการชำระเงิน
+  </button>
+</div>
+
+<!-- Modal เลือกช่องทาง -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="paymentModalLabel">เลือกช่องทางการชำระเงิน</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <form id="paymentForm" method="POST" action="/checkout_customer/select-method">
+          <input type="hidden" name="tableNumber" value="<%= tableNumber %>">
+          <input type="hidden" name="method" id="paymentMethod">
+          <button type="button" class="btn btn-outline-light me-2" onclick="submitPayment('เงินสด')">เงินสด</button>
+          <button type="button" class="btn btn-outline-info" onclick="submitPayment('QR Code')">QR Code</button>
+        </form>
+
+        <div id="confirmText" class="mt-3 text-warning d-none">
+          กรุณาชำระเงินตามช่องทางที่เลือก แล้วรอพนักงานยืนยันการทำรายการ
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal QR Code -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-light">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrCodeModalLabel">ชำระเงินด้วย QR Code</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="ปิด"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img src="/images/qr_code.png" alt="QR Code" style="width:220px;">
+        <p class="mt-2">กรุณาสแกน QR Code เพื่อชำระเงิน</p>
+      </div>
+      <div class="modal-footer">
+        <form method="POST" action="/checkout_customer/complete-payment">
+          <input type="hidden" name="tableNumber" value="<%= tableNumber %>">
+          <input type="hidden" name="method" value="QR Code">
+          <button type="submit" class="btn btn-success">ยืนยันการชำระเงินแล้ว</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<a href="/?tableNumber=<%= tableNumber %>" class="btn btn-outline-secondary mt-3">< กลับหน้าเมนู</a>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  function submitPayment(method) {
+    document.getElementById('paymentMethod').value = method;
+
+    if (method === 'เงินสด') {
+      document.getElementById('confirmText').classList.remove('d-none');
+      document.getElementById('paymentForm').submit();
+    } else if (method === 'QR Code') {
+      var qrModal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+      qrModal.show();
+      // ปิด modal ช่องทางการชำระเงิน
+      var paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+      paymentModal.hide();
+    }
+  }
+</script>
+</body>
+</html>

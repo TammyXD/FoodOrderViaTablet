@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Cashout</title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="p-4 bg-dark text-white">
+  <h3 class="mb-4">รายการที่ต้องชำระ โต๊ะ <%= tableNumber %></h3>
+  
+  <%- include("sum_table", { items: items }) %>
+  <div class="d-flex justify-content-between align-items-center mt-3">
+      <a href="/cashier_list" class="btn btn-outline-secondary">< กลับ</a>
+    <div class="text-end ">
+        <button class="btn btn-primary" onclick="window.open('/receipt/<%= tableNumber %>', '_blank')">
+        พิมพ์ใบเสร็จ
+      </button>
+    </div>
+  </div>
+</body>
+</html>

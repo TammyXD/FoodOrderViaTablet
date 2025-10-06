@@ -1,0 +1,14 @@
+<!-- receipt.ejs -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ใบเสร็จ โต๊ะ <%= tableNumber %></title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4 bg-white text-dark">
+  <h3>ใบเสร็จ โต๊ะ <%= tableNumber %></h3>
+  <%- include("sum_table", { items: items }) %>
+  <button class="btn btn-success" onclick="window.print()">พิมพ์ใบเสร็จ</button>
+</body>
+</html>

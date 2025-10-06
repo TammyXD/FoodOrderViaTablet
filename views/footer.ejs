@@ -1,0 +1,14 @@
+<footer class="fixed-bottom bg-dark py-2 shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="/history/<%= tableNum %>" class="btn btn-primary">
+    รายการอาหารทั้งหมด
+    </a>
+    <form class="d-flex align-items-center me-2" action="/" method="GET">
+      <input type="number" name="tableNumber" min="1" class="form-control form-control-sm me-2" placeholder="หมายเลขโต๊ะ" style="width: 110px;">
+      <button type="submit" class="btn btn-outline-light btn-sm">ตกลง</button>
+    </form>
+    <a href="/checkout_customer/<%= tableNum %>" class="btn btn-danger">
+    ชำระเงิน
+    </a>
+  </div>
+</footer>

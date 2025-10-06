@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ครัว</title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .status-select { min-width: 120px; }
+  </style>
+</head>
+<body class = "bg-dark">
+  <!-- navbar ชั่วคราว -->
+  <nav class="navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white fw-bold" href="/">< กลับหน้าเมนู</a>
+    </div>
+  </nav>
+  <!-- ตารางรายการที่ต้องทำ -->
+  <div class="container mt-4">
+    <h3 class="mb-4 text-white">รายการอาหารที่ต้องเตรียม</h3>
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>โต๊ะ</th>
+          <th>เมนู</th>
+          <th>จำนวน</th>
+          <th>สถานะ</th>
+          <th>อัปเดต</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(order => { %>
+          <tr class="status-<%= order.status %>">
+            <td><strong><%= order.table_number %></strong></td>
+            <td><%= order.name %></td>
+            <td><%= order.quantity %></td>
+            <td>
+              <select id="status-<%= order.id %>" class="form-select form-select-sm status-select">
+                <option value="กำลังเตรียม" <%= order.status === 'กำลังเตรียม' ? 'selected' : '' %>>กำลังทำ</option>
+                <option value="ทำเสร็จแล้ว" <%= order.status === 'ทำเสร็จแล้ว' ? 'selected' : '' %>>ทำเสร็จแล้ว</option>
+                <option value="ยกเลิกแล้ว" <%= order.status === 'ยกเลิกแล้ว' ? 'selected' : '' %>>ยกเลิกแล้ว</option>
+              </select>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-primary" onclick="updateStatus(<%= order.id %>)">อัปเดต</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function updateStatus(orderId) {
+      const status = document.getElementById(`status-${orderId}`).value;
+      fetch('/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status })
+      }).then(() => location.reload());
+
+    }
+  </script>
+</body>
+</html>

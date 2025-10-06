@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ประวัติการสั่งซื้อ โต๊ะ <%= tableNumber %></title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+
+<body class="p-4 bg-dark text-white mb-5">
+    <h3 class="mb-4">รายการที่เสิร์ฟแล้ว - โต๊ะ <%= tableNumber %></h3>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>ชื่อเมนู</th>
+            <th>จำนวน</th>
+            <th>ราคา/หน่วย</th>
+            <th>รวม</th>
+            <th>สถานะ</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% items.forEach(item => { %>
+            <tr>
+            <td><%= item.id %></td>
+            <td><%= item.name %></td>
+            <td><%= item.quantity %></td>
+            <td>฿<%= item.price.toFixed(2) %></td>
+            <td>฿<%= (item.price * item.quantity).toFixed(2) %></td>
+            <td><%= item.status %></td>
+            </tr>
+        <% }) %>
+        </tbody>
+        <% 
+        let totalQuantity = 0;
+        let totalPrice = 0;
+        items.forEach(item => {
+            totalQuantity += item.quantity;
+            totalPrice += item.price * item.quantity;
+        });
+        %>
+
+        <tfoot class="table-light">
+        <tr class="fw-bold">
+            <td colspan="2" class="text-center">รวมทั้งหมด</td>
+            <td class="text-center"><%= totalQuantity %></td>
+            <td></td>
+            <td class="text-center">฿<%= totalPrice.toFixed(2) %></td>
+            <td></td>
+        </tr>
+        </tfoot>
+        </table>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+        <a href="/?tableNumber=<%= tableNumber %>" class="navbar-brand fw-bold">< กลับหน้าเมนู</a>
+        ราคานี้ยังไม่ได้รวม VAT 7% และ Service Charge 10%
+        </div>
+        <!-- footer -->
+    <%- include("footer", { tableNum: tableNumber }) %>
+</body>
+</html>

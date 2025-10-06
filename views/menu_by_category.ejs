@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title><%= category.name %></title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .menu-img { height: 120px; object-fit: cover; border-radius: 8px; }
+    .menu-card { cursor: pointer; transition: transform 0.2s; }
+    .menu-card:hover { transform: scale(1.03); }
+    .qty-btn { width: 32px; height: 32px; padding: 0; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container-fluid mt-2">
+    <!-- Header: หมวดหมู่ -->
+    <%- include('header', { categories }) %>
+
+    <div class="row">
+      <!-- เมนูอาหาร -->
+      <div class="col-lg-8">
+        <h4 class="mb-3 text-white"><%= category.name %></h4>
+        <div class="row g-3">
+          <% items.forEach(item => { %>
+            <div class="col-sm-6 col-md-4 col-lg-4">
+              <div class="card menu-card bg-dark shadow-sm p-2" onclick="addToDatabase(<%= item.id %>, '<%= item.name %>', <%= item.price %>)">
+                <% const imagePath = `/images/${item.id}.png`; %>
+                <img src="<%= imagePath %>" class="menu-img w-100 mb-2" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<div class=\'bg-secondary text-white text-center p-4 mb-2\'>ไม่มีรูป</div>')">
+                <div class="text-center text-white">
+                  <strong><%= item.name %></strong><br>
+                  <span class="text-danger">฿<%= item.price.toFixed(2) %></span>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- ตะกร้าสั่งอาหาร -->
+      <div class="col-lg-4">
+        <h4 class="mb-3 text-white">รายการที่สั่ง</h4>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>เมนู</th>
+              <th>จำนวน</th>
+              <th>รวม</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="cart-body"></tbody>
+        </table>
+        <button onclick="confirmOrder()" class="btn btn-success w-100">ยืนยันการสั่งอาหาร</button>
+      </div>
+    </div>
+    <!-- footer -->
+    <%- include("footer", { tableNum: tableNumber }) %>
+  </div>
+  
+  <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const tableNumber = <%= tableNumber %>;
+    const cart = [];
+    const listcount = <%= listcount %>;
+
+    function addToDatabase(itemId, name, price) {
+      const existing = cart.find(i => i.itemId === itemId);
+      const uniqueItems = cart.map(i => i.itemId);
+
+      if (!existing && uniqueItems.length >= listcount) {
+        alert(`คุณสั่งครบ ${uniqueItems.length} เมนูแล้ว ไม่สามารถเพิ่มเมนูใหม่ได้ กรุณายืนรายการที่สั่งก่อน`);
+        return;
+      }
+
+      fetch('/add-item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableNumber, itemId, name, price })
+      })
+      .then(res => {
+        if (!res.ok) {
+          return res.text().then(msg => { throw new Error(msg); });
+        }
+        return res.text();
+      })
+      .then(() => loadOrders())
+      .catch(err => alert(err.message));
+    }
+
+    function loadOrders() {
+      fetch(`/orders/${tableNumber}`)
+        .then(res => res.json())
+        .then(data => {
+          cart.length = 0;
+          data.forEach(item => {
+            cart.push({
+              itemId: item.item_id,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              orderId: item.id
+            });
+          });
+          renderCart();
+        });
+    }
+
+    function updateQuantity(orderId, quantity) {
+      fetch('/update-item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableNumber, orderId, quantity })
+      }).then(() => loadOrders());
+    }
+
+    function deleteItem(orderId) {
+      fetch('/delete-item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableNumber, orderId })
+      }).then(() => loadOrders());
+    }
+
+    function renderCart() {
+      const tbody = document.getElementById('cart-body');
+      tbody.innerHTML = '';
+      cart.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-dark" onclick="updateQuantity(${item.orderId}, ${item.quantity + 1})">▲</button>
+            ${item.quantity}
+            <button class="btn btn-sm btn-outline-dark" onclick="updateQuantity(${item.orderId}, ${item.quantity - 1})">▼</button>
+          </td>
+          <td>฿${(item.price * item.quantity).toFixed(2)}</td>
+          <td><button class="btn btn-sm btn-outline-dark" onclick="deleteItem(${item.orderId})">ลบ</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function confirmOrder() {
+      fetch(`/confirm-order/${tableNumber}`, { method: 'POST' })
+        .then(res => res.text())
+        .then(msg => {
+          alert(msg);
+          loadOrders();
+        });
+    }
+
+    window.onload = loadOrders;
+  </script>
+</body>
+</html>
